@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
+import android.view.Menu;
 import android.widget.Button;
 import android.widget.TableLayout;
 
@@ -19,7 +20,10 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         toolbar=(Toolbar)findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
+        if(getSupportActionBar()!=null)
+         getSupportActionBar().openOptionsMenu();
 
 
 
@@ -35,5 +39,11 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(viewPagerAdapter);
         tabLayout.setupWithViewPager(viewPager);
 
+    }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_add_preset, menu);
+        return true;
     }
 }

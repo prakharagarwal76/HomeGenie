@@ -4,18 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingTop="100dp"
     tools:context="com.example.prakharagarwal.automaticirrigation.PresetTimeFragment"
     >
 
-    <!-- TODO: Update blank fragment layout -->
+
     <ListView
         android:id="@+id/listview_preset"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#717470">
+        >
         </ListView>
-
+<android.support.design.widget.FloatingActionButton
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:src="@drawable/ic_add_white_24dp"
+    android:layout_gravity="bottom|right"
+    android:layout_margin="20dp"
+    android:elevation="6dp"
+    android:id="@+id/fab_presetfragment"/>
 
 
 </FrameLayout>

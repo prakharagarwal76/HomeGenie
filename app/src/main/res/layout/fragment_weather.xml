@@ -11,6 +11,7 @@
         android:id="@+id/listview_forecast"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#a91d1d" />
+
+        />
 
 </FrameLayout>

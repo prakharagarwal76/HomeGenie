@@ -54,10 +54,10 @@ public class Weather extends Fragment {
         };
         List<String> weekForecast = new ArrayList<>(Arrays.asList(data));
         ArrayAdapter mForecastAdapter;
-        mForecastAdapter= new ArrayAdapter<>(getActivity(),R.layout.listitem_weather,R.id.list_item_forcast_textview,weekForecast);
+        mForecastAdapter= new ArrayAdapter<String>(getContext(),R.layout.listitem_weather,weekForecast);
         ListView listview=(ListView)rootview.findViewById(R.id.listview_forecast);
         listview.setAdapter(mForecastAdapter);
-        return inflater.inflate(R.layout.fragment_weather, container, false);
+        return rootview;
     }
 
 }

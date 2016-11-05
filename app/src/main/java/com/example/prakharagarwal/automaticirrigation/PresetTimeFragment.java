@@ -57,15 +57,15 @@ public class PresetTimeFragment extends Fragment {
         //list.setAdapter(sadapter);
         //list.setEmptyView(rootview.findViewById(R.id.preset_textview));
 
-       /* FloatingActionButton fab=(FloatingActionButton)rootview.findViewById(R.id.preset_fab);
+        FloatingActionButton fab=(FloatingActionButton)rootview.findViewById(R.id.fab_presetfragment);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final Intent mainIntent = new Intent(getActivity(), AddPresetActivity.class);
                 getActivity().startActivity(mainIntent);
             }
-        });*/
-        return inflater.inflate(R.layout.fragment_preset_time, container, false);
+        });
+        return rootview;
     }
 
 }
