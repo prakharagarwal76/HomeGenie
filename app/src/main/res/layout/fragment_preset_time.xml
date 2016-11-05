@@ -1,0 +1,21 @@
+<FrameLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingTop="100dp"
+    tools:context="com.example.prakharagarwal.automaticirrigation.PresetTimeFragment"
+    >
+
+    <!-- TODO: Update blank fragment layout -->
+    <ListView
+        android:id="@+id/listview_preset"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#717470">
+        </ListView>
+
+
+
+</FrameLayout>

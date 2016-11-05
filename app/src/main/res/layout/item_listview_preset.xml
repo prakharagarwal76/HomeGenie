@@ -1,0 +1,40 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    >
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:padding="10px"
+        android:id="@+id/list_item_preset_text1"
+        android:minHeight="?android:attr/listPreferredItemHeight">
+    </TextView>
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:padding="10px"
+        android:id="@+id/list_item_preset_text2"
+        android:minHeight="?android:attr/listPreferredItemHeight">
+    </TextView>
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:padding="10px"
+        android:id="@+id/list_item_preset_text3"
+        android:minHeight="?android:attr/listPreferredItemHeight">
+    </TextView>
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:padding="10px"
+        android:id="@+id/list_item_preset_text4"
+        android:minHeight="?android:attr/listPreferredItemHeight">
+    </TextView>
+
+
+</LinearLayout>
