@@ -12,8 +12,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.TimePicker;
 
+import java.sql.SQLException;
 import java.util.Calendar;
 
 /**
@@ -21,7 +23,8 @@ import java.util.Calendar;
  */
 public class AddPresetActivityFragment extends Fragment{
 
-    static int flag=0;
+    DBAdapter dba ;
+
     public AddPresetActivityFragment() {
     }
 
@@ -30,6 +33,13 @@ public class AddPresetActivityFragment extends Fragment{
                              Bundle savedInstanceState) {
         final View rootview = inflater.inflate(R.layout.fragment_add_preset, container, false);
 
+        dba= new DBAdapter(getActivity().getApplicationContext());
+        try {
+
+            dba.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         class SelectDateFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
             int flag=0;
@@ -90,10 +100,12 @@ public class AddPresetActivityFragment extends Fragment{
                 }
             }
         }
-        Button btn1=(Button)rootview.findViewById(R.id.btn1);
-        Button btn2=(Button)rootview.findViewById(R.id.btn2);
-        Button btn3=(Button)rootview.findViewById(R.id.btn3);
-        Button btn4=(Button)rootview.findViewById(R.id.btn4);
+        final Button btn1=(Button)rootview.findViewById(R.id.btn1);
+        final Button btn2=(Button)rootview.findViewById(R.id.btn2);
+        final Button btn3=(Button)rootview.findViewById(R.id.btn3);
+        final Button btn4=(Button)rootview.findViewById(R.id.btn4);
+        Button save=(Button)rootview.findViewById(R.id.btn_addpreset_save);
+        final EditText presetName=(EditText)rootview.findViewById(R.id.edittext1_addpreset);
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,6 +132,14 @@ public class AddPresetActivityFragment extends Fragment{
                 new TimePickerFragment(4).show(getFragmentManager(),"Select time");
             }
         });
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dba.insert(presetName.getText().toString(),btn1.getText().toString()+" "+btn2.getText().toString(),btn3.getText().toString()+" "+btn4.getText().toString());
+            }
+        });
+
+
         return rootview;
     }
 

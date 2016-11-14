@@ -106,13 +106,13 @@ public class DBAdapter {
         List<String> nameList=new ArrayList<String>(Arrays.asList(names));
         return nameList;
     }
-    public long insert(String name,String start, String stop,String status) {
+    public long insert(String name,String start, String stop) {
         //db = DBHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(DatabaseHelper.NAME, name);
         contentValues.put(DatabaseHelper.START_TIME, start);
         contentValues.put(DatabaseHelper.STOP_TIME, stop);
-        contentValues.put(DatabaseHelper.STATUS, status);
+        contentValues.put(DatabaseHelper.STATUS,0);
 
         long id = db.insert(DatabaseHelper.PRESET_TABLE, null, contentValues);
         //DBHelper.close();

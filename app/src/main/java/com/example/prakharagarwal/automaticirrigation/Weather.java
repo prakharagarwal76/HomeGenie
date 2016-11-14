@@ -63,12 +63,7 @@ public class Weather extends Fragment {
                              Bundle savedInstanceState) {
 
 
-        mForecastAdapter =
-                new ArrayAdapter<String>(
-                        getActivity(), // The current context (this activity)
-                        R.layout.listitem_weather, // The name of the layout ID.
-                        R.id.list_item_forcast_textview, // The ID of the textview to populate
-                        new ArrayList<String>());
+
 
         View rootView = inflater.inflate(R.layout.fragment_weather, container, false);
 
@@ -80,6 +75,12 @@ public class Weather extends Fragment {
     }
 
     private void updateWeather() {
+        mForecastAdapter =
+                new ArrayAdapter<String>(
+                        getActivity(), // The current context (this activity)
+                        R.layout.listitem_weather, // The name of the layout ID.
+                        R.id.list_item_forcast_textview, // The ID of the textview to populate
+                        new ArrayList<String>());
         FetchWeatherTask weatherTask = new FetchWeatherTask();
        weatherTask.execute("110088");
     }

@@ -82,7 +82,7 @@ public class MasterControlFragment extends Fragment {
 
             try {
 
-                String link = "http://192.168.43.180:8888/automaticirrigation/db_put.php";
+                String link = "http://homegenie.gear.host/db_put.php";
                 ///     String data = URLEncoder.encode("userid", "UTF-8") + "=" + URLEncoder.encode(username, "UTF-8");
                 //  data += "&" + URLEncoder.encode("pwd", "UTF-8") + "=" + URLEncoder.encode(password, "UTF-8");
 
@@ -194,7 +194,7 @@ public class MasterControlFragment extends Fragment {
 
             try {
 
-                String link = "http://192.168.43.180:8888/automaticirrigation/db_get1.php";
+                String link = "http://homegenie.gear.host/db_get1.php";
                 ///     String data = URLEncoder.encode("userid", "UTF-8") + "=" + URLEncoder.encode(username, "UTF-8");
                 //  data += "&" + URLEncoder.encode("pwd", "UTF-8") + "=" + URLEncoder.encode(password, "UTF-8");
 
