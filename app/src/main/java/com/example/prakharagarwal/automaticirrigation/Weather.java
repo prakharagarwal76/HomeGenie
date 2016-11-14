@@ -48,6 +48,7 @@ public class Weather extends Fragment {
 
     private ImageView mIconView;
     private TextView mFriendlyDateView;
+    private TextView mRainView;
     private TextView mCityView;
     private TextView mDescriptionView;
     private TextView mHighTempView;
@@ -93,6 +94,7 @@ public class Weather extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_weather, container, false);
         mIconView = (ImageView) rootView.findViewById(R.id.detail_icon);
+        mRainView=(TextView)rootView.findViewById(R.id.detail_rain_textview);
         mCityView = (TextView) rootView.findViewById(R.id.detail_city_textview);
         mFriendlyDateView = (TextView) rootView.findViewById(R.id.detail_day_textview);
         mDescriptionView = (TextView) rootView.findViewById(R.id.detail_forecast_textview);
@@ -194,6 +196,7 @@ public class Weather extends Fragment {
             final String OWM_HUMIDITY = "humidity";
             final String OWM_WINDSPEED = "speed";
             final String OWM_WIND_DIRECTION = "deg";
+            final String OWM_RAIN= "rain";
 
             // All temperatures are children of the "temp" object.
             final String OWM_TEMPERATURE = "temp";
@@ -235,6 +238,7 @@ public class Weather extends Fragment {
                     int humidity;
                     double windSpeed;
                     double windDirection;
+                    double rain=0.00;
 
                     double high;
                     double low;
@@ -255,6 +259,9 @@ public class Weather extends Fragment {
                     windSpeed = dayForecast.getDouble(OWM_WINDSPEED);
                     windDirection = dayForecast.getDouble(OWM_WIND_DIRECTION);
 
+                    if(dayForecast.has(OWM_RAIN))
+                      rain=dayForecast.getDouble(OWM_RAIN);
+
 
                     // Description is in a child array called "weather", which is 1 element long.
                     // That element also contains a weather code.
@@ -269,7 +276,7 @@ public class Weather extends Fragment {
                     JSONObject temperatureObject = dayForecast.getJSONObject(OWM_TEMPERATURE);
                     high = temperatureObject.getDouble(OWM_MAX);
                     low = temperatureObject.getDouble(OWM_MIN);
-                    WeatherData weatherValues = new WeatherData(weatherId,cityName,friendlyDate,icon, description ,high,low,humidity ,windSpeed,windDirection,pressure);
+                    WeatherData weatherValues = new WeatherData(weatherId,cityName,friendlyDate,rain,icon,description ,high,low,humidity ,windSpeed,windDirection,pressure);
 
 
                     return weatherValues;
@@ -389,10 +396,11 @@ public class Weather extends Fragment {
         protected void onPostExecute(WeatherData result) {
             if (result != null) {
 
-                dba.update_weatheri(result.weatherId,result.city,result.friendlyDateText,result.icon, result.description ,result.high,result.low,result.humidity ,result.windSpeedStr,result.windDirStr,result.pressure);
+                dba.update_weatheri(result.weatherId,result.city,result.friendlyDateText,result.rain,result.icon, result.description ,result.high,result.low,result.humidity ,result.windSpeedStr,result.windDirStr,result.pressure);
 
 
                 mCityView.setText(""+result.city);
+                mRainView.setText("Precipitation: "+result.rain+" mm");
                 mFriendlyDateView.setText(result.friendlyDateText);
                 Picasso.with(getContext()).load(result.icon).into(mIconView);
                 mDescriptionView.setText(result.description);

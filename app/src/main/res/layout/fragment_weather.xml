@@ -48,7 +48,7 @@
 
             <LinearLayout
                 android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_weight="1.2"
                 android:layout_gravity="center"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -58,6 +58,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="20dp"
+                    android:textStyle="bold"
                     android:text="city"/>
 
 
@@ -74,6 +75,14 @@
                     android:layout_height="wrap_content"
                     android:textSize="20dp"
                     android:text="11°" />
+
+                <TextView
+                    android:id="@+id/detail_rain_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20dp"
+                    android:text=".76 mm"/>
+
             </LinearLayout>
 
             <LinearLayout
