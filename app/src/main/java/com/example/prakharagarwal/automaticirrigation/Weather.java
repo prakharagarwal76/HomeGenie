@@ -17,7 +17,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,6 +44,18 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class Weather extends Fragment {
+
+
+    private ImageView mIconView;
+    private TextView mFriendlyDateView;
+    private TextView mCityView;
+    private TextView mDescriptionView;
+    private TextView mHighTempView;
+    private TextView mLowTempView;
+    private TextView mHumidityView;
+    private TextView mWindView;
+    private TextView mPressureView;
+
 
 
     public Weather() {
@@ -65,12 +81,23 @@ public class Weather extends Fragment {
 
 
 
-        View rootView = inflater.inflate(R.layout.fragment_weather, container, false);
+        /*View rootView = inflater.inflate(R.layout.fragment_weather, container, false);
 
         // Get a reference to the ListView, and attach this adapter to it.
         ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
         listView.setAdapter(mForecastAdapter);
+        */
 
+        View rootView = inflater.inflate(R.layout.fragment_weather, container, false);
+        mIconView = (ImageView) rootView.findViewById(R.id.detail_icon);
+        mCityView = (TextView) rootView.findViewById(R.id.detail_city_textview);
+        mFriendlyDateView = (TextView) rootView.findViewById(R.id.detail_day_textview);
+        mDescriptionView = (TextView) rootView.findViewById(R.id.detail_forecast_textview);
+        mHighTempView = (TextView) rootView.findViewById(R.id.detail_high_textview);
+        mLowTempView = (TextView) rootView.findViewById(R.id.detail_low_textview);
+        mHumidityView = (TextView) rootView.findViewById(R.id.detail_humidity_textview);
+        mWindView = (TextView) rootView.findViewById(R.id.detail_wind_textview);
+        mPressureView = (TextView) rootView.findViewById(R.id.detail_pressure_textview);
         return rootView;
     }
 
@@ -91,7 +118,7 @@ public class Weather extends Fragment {
         updateWeather();
     }
 
-    public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
+    public class FetchWeatherTask extends AsyncTask<String, Void, WeatherData> {
 
         private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
@@ -105,6 +132,34 @@ public class Weather extends Fragment {
             return shortenedDateFormat.format(time);
         }
 
+        public String getFormattedWind(double windSpeed, double degrees) {
+
+            // From wind direction in degrees, determine compass direction as a string (e.g NW)
+            // You know what's fun, writing really long if/else statements with tons of possible
+            // conditions.  Seriously, try it!
+            String direction = "Unknown";
+            if (degrees >= 337.5 || degrees < 22.5) {
+                direction = "N";
+            } else if (degrees >= 22.5 && degrees < 67.5) {
+                direction = "NE";
+            } else if (degrees >= 67.5 && degrees < 112.5) {
+                direction = "E";
+            } else if (degrees >= 112.5 && degrees < 157.5) {
+                direction = "SE";
+            } else if (degrees >= 157.5 && degrees < 202.5) {
+                direction = "S";
+            } else if (degrees >= 202.5 && degrees < 247.5) {
+                direction = "SW";
+            } else if (degrees >= 247.5 && degrees < 292.5) {
+                direction = "W";
+            } else if (degrees >= 292.5 && degrees < 337.5) {
+                direction = "NW";
+            }
+            return windSpeed+" kmph "+direction;
+        }
+
+
+
         /**
          * Prepare the weather high/lows for presentation.
          */
@@ -117,84 +172,114 @@ public class Weather extends Fragment {
             return highLowStr;
         }
 
-        /**
-         * Take the String representing the complete forecast in JSON Format and
-         * pull out the data we need to construct the Strings needed for the wireframes.
-         *
-         * Fortunately parsing is easy:  constructor takes the JSON string and converts it
-         * into an Object hierarchy for us.
-         */
-        private String[] getWeatherDataFromJson(String forecastJsonStr, int numDays)
+        private WeatherData getWeatherDataFromJson(String forecastJsonStr, int numDays)
                 throws JSONException {
 
-            // These are the names of the JSON objects that need to be extracted.
+            // Location information
+            final String OWM_CITY = "city";
+            final String OWM_CITY_NAME = "name";
+            final String OWM_COORD = "coord";
+
+            // Location coordinate
+            final String OWM_LATITUDE = "lat";
+            final String OWM_LONGITUDE = "lon";
+
+            // Weather information.  Each day's forecast info is an element of the "list" array.
             final String OWM_LIST = "list";
-            final String OWM_WEATHER = "weather";
+
+            final String OWM_PRESSURE = "pressure";
+            final String OWM_HUMIDITY = "humidity";
+            final String OWM_WINDSPEED = "speed";
+            final String OWM_WIND_DIRECTION = "deg";
+
+            // All temperatures are children of the "temp" object.
             final String OWM_TEMPERATURE = "temp";
             final String OWM_MAX = "max";
             final String OWM_MIN = "min";
+
+            final String OWM_WEATHER = "weather";
+            final String OWM_ICON = "icon";
             final String OWM_DESCRIPTION = "main";
+            final String OWM_WEATHER_ID = "id";
 
-            JSONObject forecastJson = new JSONObject(forecastJsonStr);
-            JSONArray weatherArray = forecastJson.getJSONArray(OWM_LIST);
 
-            // OWM returns daily forecasts based upon the local time of the city that is being
-            // asked for, which means that we need to know the GMT offset to translate this data
-            // properly.
+            try {
+                JSONObject forecastJson = new JSONObject(forecastJsonStr);
+                JSONArray weatherArray = forecastJson.getJSONArray(OWM_LIST);
 
-            // Since this data is also sent in-order and the first day is always the
-            // current day, we're going to take advantage of that to get a nice
-            // normalized UTC date for all of our weather.
+                JSONObject cityJson = forecastJson.getJSONObject(OWM_CITY);
+                String cityName = cityJson.getString(OWM_CITY_NAME);
 
-            Time dayTime = new Time();
-            dayTime.setToNow();
+                JSONObject cityCoord = cityJson.getJSONObject(OWM_COORD);
+                double cityLatitude = cityCoord.getDouble(OWM_LATITUDE);
+                double cityLongitude = cityCoord.getDouble(OWM_LONGITUDE);
 
-            // we start at the day returned by local time. Otherwise this is a mess.
-            int julianStartDay = Time.getJulianDay(System.currentTimeMillis(), dayTime.gmtoff);
+                Time dayTime = new Time();
+                dayTime.setToNow();
 
-            // now we work exclusively in UTC
-            dayTime = new Time();
+                // we start at the day returned by local time. Otherwise this is a mess.
+                int julianStartDay = Time.getJulianDay(System.currentTimeMillis(), dayTime.gmtoff);
 
-            String[] resultStrs = new String[numDays];
-            for(int i = 0; i < weatherArray.length(); i++) {
-                // For now, using the format "Day, description, hi/low"
-                String day;
-                String description;
-                String highAndLow;
+                // now we work exclusively in UTC
+                dayTime = new Time();
 
-                // Get the JSON object representing the day
-                JSONObject dayForecast = weatherArray.getJSONObject(i);
+                for(int i = 0; i < weatherArray.length(); i++) {
+                    // These are the values that will be collected.
+                    long dateTime;
+                    String friendlyDate;
 
-                // The date/time is returned as a long.  We need to convert that
-                // into something human-readable, since most people won't read "1400356800" as
-                // "this saturday".
-                long dateTime;
-                // Cheating to convert this to UTC time, which is what we want anyhow
-                dateTime = dayTime.setJulianDay(julianStartDay+i);
-                day = getReadableDateString(dateTime);
+                    double pressure;
+                    int humidity;
+                    double windSpeed;
+                    double windDirection;
 
-                // description is in a child array called "weather", which is 1 element long.
-                JSONObject weatherObject = dayForecast.getJSONArray(OWM_WEATHER).getJSONObject(0);
-                description = weatherObject.getString(OWM_DESCRIPTION);
+                    double high;
+                    double low;
 
-                // Temperatures are in a child object called "temp".  Try not to name variables
-                // "temp" when working with temperature.  It confuses everybody.
-                JSONObject temperatureObject = dayForecast.getJSONObject(OWM_TEMPERATURE);
-                double high = temperatureObject.getDouble(OWM_MAX);
-                double low = temperatureObject.getDouble(OWM_MIN);
+                    String icon;
+                    String description;
+                    int weatherId;
 
-                highAndLow = formatHighLows(high, low);
-                resultStrs[i] = day + " - " + description + " - " + highAndLow;
+                    // Get the JSON object representing the day
+                    JSONObject dayForecast = weatherArray.getJSONObject(i);
+
+                    // Cheating to convert this to UTC time, which is what we want anyhow
+                    dateTime = dayTime.setJulianDay(julianStartDay+i);
+
+                    friendlyDate=getReadableDateString(dateTime);
+                    pressure = dayForecast.getDouble(OWM_PRESSURE);
+                    humidity = dayForecast.getInt(OWM_HUMIDITY);
+                    windSpeed = dayForecast.getDouble(OWM_WINDSPEED);
+                    windDirection = dayForecast.getDouble(OWM_WIND_DIRECTION);
+
+
+                    // Description is in a child array called "weather", which is 1 element long.
+                    // That element also contains a weather code.
+                    JSONObject weatherObject =
+                            dayForecast.getJSONArray(OWM_WEATHER).getJSONObject(0);
+                    icon="http://openweathermap.org/img/w/"+weatherObject.getString(OWM_ICON)+".png";
+                    description = weatherObject.getString(OWM_DESCRIPTION);
+                    weatherId = weatherObject.getInt(OWM_WEATHER_ID);
+
+                    // Temperatures are in a child object called "temp".  Try not to name variables
+                    // "temp" when working with temperature.  It confuses everybody.
+                    JSONObject temperatureObject = dayForecast.getJSONObject(OWM_TEMPERATURE);
+                    high = temperatureObject.getDouble(OWM_MAX);
+                    low = temperatureObject.getDouble(OWM_MIN);
+                    WeatherData weatherValues = new WeatherData(weatherId,cityName,friendlyDate,icon, description ,high,low,humidity ,windSpeed,windDirection,pressure);
+                    return weatherValues;
+                }
+
+                Log.d(LOG_TAG, "FetchWeatherTask Complete.  Inserted");
+
+            } catch (JSONException e) {
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
             }
-
-            for (String s : resultStrs) {
-                Log.v(LOG_TAG, "Forecast entry: " + s);
-            }
-            return resultStrs;
-
+            return null;
         }
         @Override
-        protected String[] doInBackground(String... params) {
+        protected WeatherData doInBackground(String... params) {
 
             // If there's no zip code, there's nothing to look up.  Verify size of params.
             if (params.length == 0) {
@@ -211,7 +296,7 @@ public class Weather extends Fragment {
 
             String format = "json";
             String units = "metric";
-            int numDays = 7;
+            int numDays = 1;
 
             try {
                 // Construct the URL for the OpenWeatherMap query
@@ -296,13 +381,18 @@ public class Weather extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(String[] result) {
+        protected void onPostExecute(WeatherData result) {
             if (result != null) {
-                mForecastAdapter.clear();
-                for(String dayForecastStr : result) {
-                    mForecastAdapter.add(dayForecastStr);
-                }
-                // New data is back from the server.  Hooray!
+
+                mCityView.setText(""+result.city);
+                mFriendlyDateView.setText(result.friendlyDateText);
+                Picasso.with(getContext()).load(result.icon).into(mIconView);
+                mDescriptionView.setText(result.description);
+                mHighTempView.setText("Max: "+result.high);
+                mLowTempView.setText("Min: "+result.low);
+                mHumidityView.setText("Humidity: "+result.humidity+"%");
+                mWindView.setText("Wind: "+getFormattedWind(result.windSpeedStr,result.windDirStr));
+                mPressureView.setText("Pressure: "+result.pressure);
             }
         }
     }
