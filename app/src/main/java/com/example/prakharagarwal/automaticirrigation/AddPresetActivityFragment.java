@@ -14,9 +14,11 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -135,7 +137,23 @@ public class AddPresetActivityFragment extends Fragment{
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dba.insert(presetName.getText().toString(),btn1.getText().toString()+" "+btn2.getText().toString(),btn3.getText().toString()+" "+btn4.getText().toString());
+                List<String> names=dba.getNames();
+                if(presetName.getText().toString().equals("")){
+                    Toast.makeText(getContext(), "Name cannot be blank", Toast.LENGTH_SHORT).show();
+                }else {
+                    if (names.contains(presetName.getText().toString())) {
+                        Toast.makeText(getContext(), "Name already used. Choose a different name", Toast.LENGTH_SHORT).show();
+                    } else {
+                        if(btn1.getText().toString().equals("pick date")||btn2.getText().toString().equals("pick time")
+                                ||btn3.getText().toString().equals("pick date")||btn4.getText().toString().equals("pick time")){
+                            Toast.makeText(getContext(), "Choose Date and Time", Toast.LENGTH_SHORT).show();
+                        }else {
+                            dba.insert(presetName.getText().toString(), btn1.getText().toString() + " " + btn2.getText().toString(), btn3.getText().toString() + " " + btn4.getText().toString());
+                            getActivity().setResult(1);
+                            getActivity().finish();
+                        }
+                    }
+                }
             }
         });
 

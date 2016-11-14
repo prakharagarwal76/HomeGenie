@@ -26,17 +26,7 @@ public class DBAdapter {
         DBHelper = new DatabaseHelper(context);
     }
 
-    public static String UniConvertHindi(String str) {
-        String actualCharacter="";
-        if(str!=null)
-            try
-            {
-                byte[] b = str.getBytes();
-                actualCharacter = new String(b, "UTF-8");
-            } catch (UnsupportedEncodingException ex) {
-            }
-        return actualCharacter;
-    }
+
     public DBAdapter open() throws SQLException {
         db = DBHelper.getWritableDatabase();
         return this;
@@ -121,6 +111,19 @@ public class DBAdapter {
     public void close() {
         DBHelper.close();
     }
+
+    public void deletePreset(String item) {
+        String qry="delete from "+DatabaseHelper.PRESET_TABLE+" where "+DatabaseHelper
+                .NAME+" = '"+item+"';";
+        db.execSQL(qry);
+    }
+
+    public void updateStatus(int status,String name) {
+        String qry="update "+DatabaseHelper.PRESET_TABLE+" set "+DatabaseHelper
+                .STATUS+" = '"+status+"' where "+DatabaseHelper.NAME+" ='"+name+"';";
+        db.execSQL(qry);
+    }
+
     static class DatabaseHelper extends SQLiteOpenHelper {
         private static final String DATABASE_NAME = "AutoIrrigateDB";
 
@@ -149,7 +152,7 @@ public class DBAdapter {
 
         //walletpartnerdetails table
         private static final String PRESET_CREATE = "create table if not exists "
-                + PRESET_TABLE + "(" + NAME + " VARCHAR(25), " + START_TIME + " VARCHAR(25), " + STOP_TIME + " VARCHAR(25) , "
+                + PRESET_TABLE + "(" + NAME + " VARCHAR(25) primary key, " + START_TIME + " VARCHAR(25), " + STOP_TIME + " VARCHAR(25) , "
                 + STATUS + " INTEGER " + ");";
 
 

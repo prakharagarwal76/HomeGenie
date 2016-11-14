@@ -49,7 +49,7 @@ public class MasterControlFragment extends Fragment {
 
         statustext=(TextView)rootView.findViewById(R.id.mastercontrol_status);
         status_switch=(Switch)rootView.findViewById(R.id.mastercontrol_switch);
-        new SyncTask_GET().execute();
+
 
         status_switch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -66,6 +66,11 @@ public class MasterControlFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        new SyncTask_GET().execute();
+    }
 
     public class SyncTask_PUT extends AsyncTask<Integer, Void, String> {
 
