@@ -55,6 +55,7 @@ public class Weather extends Fragment {
     private TextView mHumidityView;
     private TextView mWindView;
     private TextView mPressureView;
+    DBAdapter dba;
 
 
 
@@ -78,6 +79,8 @@ public class Weather extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+
+        dba= new DBAdapter(getActivity().getApplicationContext());
 
 
 
@@ -267,6 +270,8 @@ public class Weather extends Fragment {
                     high = temperatureObject.getDouble(OWM_MAX);
                     low = temperatureObject.getDouble(OWM_MIN);
                     WeatherData weatherValues = new WeatherData(weatherId,cityName,friendlyDate,icon, description ,high,low,humidity ,windSpeed,windDirection,pressure);
+
+
                     return weatherValues;
                 }
 
@@ -383,6 +388,9 @@ public class Weather extends Fragment {
         @Override
         protected void onPostExecute(WeatherData result) {
             if (result != null) {
+
+                dba.update_weatheri(result.weatherId,result.city,result.friendlyDateText,result.icon, result.description ,result.high,result.low,result.humidity ,result.windSpeedStr,result.windDirStr,result.pressure);
+
 
                 mCityView.setText(""+result.city);
                 mFriendlyDateView.setText(result.friendlyDateText);
