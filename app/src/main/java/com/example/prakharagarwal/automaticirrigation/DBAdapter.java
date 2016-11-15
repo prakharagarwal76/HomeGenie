@@ -110,7 +110,7 @@ public class DBAdapter {
         return id;
     }
 
-    public void update_weatheri(int weatherId,String city,String friendlyDateText,String icon,
+    public void update_weatheri(int weatherId,String city,String friendlyDateText,double rain,String icon,
     String description ,double high, double low, float humidity ,double windSpeedStr,
     double windDirStr,double pressure){//db = DBHelper.getWritableDatabase();
         ContentValues weatherValues = new ContentValues();
@@ -119,6 +119,7 @@ public class DBAdapter {
 
         weatherValues.put(DatabaseHelper.COLUMN_CITY, city);
         weatherValues.put(DatabaseHelper.COLUMN_FRIENDLY_DATE, friendlyDateText);
+        weatherValues.put(DatabaseHelper.COLUMN_RAIN, rain);
         weatherValues.put(DatabaseHelper.COLUMN_HUMIDITY, humidity);
         weatherValues.put(DatabaseHelper.COLUMN_PRESSURE, pressure);
         weatherValues.put(DatabaseHelper.COLUMN_WIND_SPEED, windSpeedStr);
@@ -221,6 +222,8 @@ public class DBAdapter {
         // Windspeed is stored as a float representing windspeed  mph
         public static final String COLUMN_WIND_SPEED = "wind";
 
+        public static final String COLUMN_RAIN = "rain";
+
         // Degrees are meteorological degrees (e.g, 0 is north, 180 is south).  Stored as floats.
         public static final String COLUMN_DEGREES = "degrees";
 
@@ -251,6 +254,7 @@ public class DBAdapter {
         final String WEATHER_CREATE = "CREATE TABLE IF NOT EXISTS " +WEATHER_TABLE + " (" +
                 COLUMN_CITY + " TEXT NOT NULL, " +
                 COLUMN_FRIENDLY_DATE+ " TEXT NOT NULL, "+
+                COLUMN_RAIN+" REAL NOT NULL, "+
                 COLUMN_ICON+" TEXT NOT NULL, "+
                 COLUMN_SHORT_DESC + " TEXT NOT NULL, " +
                 COLUMN_WEATHER_ID + " INTEGER NOT NULL," +

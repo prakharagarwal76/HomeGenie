@@ -10,6 +10,7 @@ public class WeatherData {
     String city;
     String friendlyDateText ;
     //String dateText ;
+    double rain;
     String icon;
     String description ;
     double high;
@@ -22,13 +23,14 @@ public class WeatherData {
     // Read pressure from cursor and update view
     double pressure ;
 
-    public WeatherData(int weatherId,String city,String friendlyDateText,String icon,
+    public WeatherData(int weatherId,String city,String friendlyDateText,double rain,String icon,
             String description ,double high, double low, float humidity ,double windSpeedStr,
             double windDirStr,double pressure){
         this.weatherId=weatherId;
         //this.date=date;
         this.city=city;
         this.friendlyDateText=friendlyDateText;
+        this.rain=rain;
         this.icon=icon;
         //this.dateText=dateText;
         this.description=description;
