@@ -15,6 +15,7 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
 
     Toolbar toolbar;
+    DBAdapter dba;
     ViewPager viewPager;
     TabLayout tabLayout;
     ViewPagerAdapter viewPagerAdapter;
@@ -28,8 +29,9 @@ public class MainActivity extends AppCompatActivity {
          getSupportActionBar().openOptionsMenu();
 
 
-
+        dba=new DBAdapter(getApplicationContext());
         setContentView(R.layout.activity_main);
+        new SyncTask_GET(dba).execute();
 
         viewPagerAdapter=new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.addFragment(new MasterControlFragment(),"Master Control");
@@ -50,12 +52,5 @@ public class MainActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode==1){
 
-
-        }
-    }
 }

@@ -198,6 +198,33 @@ public class DBAdapter {
         db.execSQL(qry);
     }
 
+    public void updateCurrentStatus(int item) {
+        String qry="select * from mastercontrol";
+        Cursor cursor=db.rawQuery(qry,null);
+        int count=cursor.getCount();
+        Log.e("ffsssss",count+"");
+        if(count==0){
+            String qr1="insert into mastercontrol values("+item+");";
+            db.execSQL(qr1);
+        }else{
+        String qr1="update mastercontrol set status="+item+";";
+                db.execSQL(qr1);
+        }
+
+
+    }
+
+    public int getCurrentStatus() {
+        String qry="select status from mastercontrol;";
+        Cursor cursor=db.rawQuery(qry,null);
+        int currentStatus=0;
+        while(cursor.moveToNext()){
+            currentStatus=cursor.getInt(0);
+
+        }
+        return currentStatus;
+    }
+
 
     static class DatabaseHelper extends SQLiteOpenHelper {
         private static final String DATABASE_NAME = "AutoIrrigateDB";
@@ -215,23 +242,6 @@ public class DBAdapter {
         private static final String START_TIME = "starttime";
         private static final String STOP_TIME = "stoptime";
         private static final String STATUS = "status";
-
-        private static final String PRESET_TABLE = "presettable";
-        public static final String WEATHER_TABLE = "weather";
-
-
-        private static final String TAG = "DBAdapter";
-
-        private static final int DATABASE_VERSION = 1;
-
-
-
-        private static final String PRESET_CREATE = "create table if not exists "
-                + PRESET_TABLE + "(" + NAME + " VARCHAR(25) primary key, " + START_TIME + " VARCHAR(25), " + STOP_TIME + " VARCHAR(25) , "
-                + STATUS + " INTEGER " + ");";
-
-
-
 
         // Date, stored as long in milliseconds since the epoch
         public static final String COLUMN_CITY = "city";
@@ -266,6 +276,29 @@ public class DBAdapter {
         // Degrees are meteorological degrees (e.g, 0 is north, 180 is south).  Stored as floats.
         public static final String COLUMN_DEGREES = "degrees";
 
+        public static final String COLUMN_STATUS = "status";
+
+        private static final String PRESET_TABLE = "presettable";
+        public static final String WEATHER_TABLE = "weather";
+        public static final String STATUS_TABLE = "mastercontrol";
+
+
+        private static final String TAG = "DBAdapter";
+
+        private static final int DATABASE_VERSION = 1;
+
+
+
+        private static final String PRESET_CREATE = "create table if not exists "
+                + PRESET_TABLE + "(" + NAME + " VARCHAR(25) primary key, " + START_TIME + " VARCHAR(25), " + STOP_TIME + " VARCHAR(25) , "
+                + STATUS + " INTEGER " + ");";
+
+
+        private static final String  STATUS_CREATE=" create table if not exists "
+                +STATUS_TABLE+ "("+ COLUMN_STATUS+" INTEGER NOT NULL);";
+
+
+
 
         final String WEATHER_CREATE = "CREATE TABLE IF NOT EXISTS " +WEATHER_TABLE + " (" +
                 COLUMN_CITY + " TEXT NOT NULL, " +
@@ -294,12 +327,14 @@ public class DBAdapter {
 
             db.execSQL(PRESET_CREATE);
             db.execSQL(WEATHER_CREATE);
+            db.execSQL(STATUS_CREATE);
         }
 
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-            db.execSQL("DROP TABLE IF EXISTS" + PRESET_CREATE);
-            db.execSQL("DROP TABLE IF EXISTS" + WEATHER_CREATE);
+            db.execSQL("DROP TABLE IF EXISTS" + PRESET_TABLE);
+            db.execSQL("DROP TABLE IF EXISTS" + WEATHER_TABLE);
+            db.execSQL("DROP TABLE IF EXISTS" + STATUS_TABLE);
 
             onCreate(db);
         }
