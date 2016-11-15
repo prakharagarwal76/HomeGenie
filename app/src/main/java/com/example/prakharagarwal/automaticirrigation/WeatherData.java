@@ -6,7 +6,7 @@ package com.example.prakharagarwal.automaticirrigation;
 public class WeatherData {
 
     int weatherId ;
-    //long date ;
+    long date ;
     String city;
     String friendlyDateText ;
     //String dateText ;
@@ -23,11 +23,11 @@ public class WeatherData {
     // Read pressure from cursor and update view
     double pressure ;
 
-    public WeatherData(int weatherId,String city,String friendlyDateText,double rain,String icon,
+    public WeatherData(int weatherId,String city,long date,String friendlyDateText,double rain,String icon,
             String description ,double high, double low, float humidity ,double windSpeedStr,
             double windDirStr,double pressure){
         this.weatherId=weatherId;
-        //this.date=date;
+        this.date=date;
         this.city=city;
         this.friendlyDateText=friendlyDateText;
         this.rain=rain;

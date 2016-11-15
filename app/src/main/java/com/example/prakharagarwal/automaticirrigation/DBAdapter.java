@@ -31,6 +31,21 @@ public class DBAdapter {
         db = DBHelper.getWritableDatabase();
         return this;
     }
+
+    public  long getDate(){
+
+
+        String qry= "select date from weather; ";
+        Cursor cursor=db.rawQuery(qry,null);
+        int count = cursor.getCount();
+        long date=0;
+        while(cursor.moveToNext()){
+            date=cursor.getLong(0);
+
+        }
+
+    return date;
+    }
     public List<String> getNames(){
         String names[];
         int i=0;
@@ -47,6 +62,7 @@ public class DBAdapter {
         List<String> nameList=new ArrayList<String>(Arrays.asList(names));
         return nameList;
     }
+
 
     public List<String> getStart(){
         String names[];
@@ -110,7 +126,31 @@ public class DBAdapter {
         return id;
     }
 
-    public void update_weatheri(int weatherId,String city,String friendlyDateText,double rain,String icon,
+    public Cursor showWeather()
+    {
+        //int count=0,i=0;
+        String qry="select * from weather;";
+        Cursor c=db.rawQuery(qry,null);
+
+        /*WeatherData[] result;
+
+        count=c.getCount();
+        result=new WeatherData[count];
+
+        while (c.moveToNext())
+        {
+            result[i]= new WeatherData(c.getInt(6),c.getString(1),c.getString(2),c.getDouble(3),c.getString(4),c.getString(5),c.getDouble(7),c.getDouble(8),c.getFloat(9),c.getDouble(10),c.getDouble(11),c.getDouble(12));
+            i++;
+        }
+        // List<Movie> movieList=new ArrayList<>(Arrays.asList(result));
+        return result;
+        */
+
+        return c;
+    }
+
+
+    public void update_weatheri(int weatherId,String city,long date,String friendlyDateText,double rain,String icon,
     String description ,double high, double low, float humidity ,double windSpeedStr,
     double windDirStr,double pressure){//db = DBHelper.getWritableDatabase();
         ContentValues weatherValues = new ContentValues();
@@ -118,6 +158,7 @@ public class DBAdapter {
         weatherValues.put(DatabaseHelper.COLUMN_ICON, icon);
 
         weatherValues.put(DatabaseHelper.COLUMN_CITY, city);
+        weatherValues.put(DatabaseHelper.COLUMN_DATE, date);
         weatherValues.put(DatabaseHelper.COLUMN_FRIENDLY_DATE, friendlyDateText);
         weatherValues.put(DatabaseHelper.COLUMN_RAIN, rain);
         weatherValues.put(DatabaseHelper.COLUMN_HUMIDITY, humidity);
@@ -129,8 +170,14 @@ public class DBAdapter {
         weatherValues.put(DatabaseHelper.COLUMN_SHORT_DESC, description);
         weatherValues.put(DatabaseHelper.COLUMN_WEATHER_ID, weatherId);
 
-        long id = db.insert(DatabaseHelper.WEATHER_TABLE, null, weatherValues);
-        //DBHelper.close();
+        Cursor c=showWeather();
+        int count=c.getCount();
+        if(count==0)
+          db.insert(DatabaseHelper.WEATHER_TABLE, null, weatherValues);
+        else
+        {
+            db.update(DatabaseHelper.WEATHER_TABLE, weatherValues,null,null);
+        }//DBHelper.close();
         //return id;
 
     }
@@ -188,6 +235,8 @@ public class DBAdapter {
 
         // Date, stored as long in milliseconds since the epoch
         public static final String COLUMN_CITY = "city";
+        public static final String COLUMN_DATE = "date";
+
         public static final String COLUMN_FRIENDLY_DATE = "friendlydate";
 
         // Weather id as returned by API, to identify the icon to be used
@@ -220,6 +269,7 @@ public class DBAdapter {
 
         final String WEATHER_CREATE = "CREATE TABLE IF NOT EXISTS " +WEATHER_TABLE + " (" +
                 COLUMN_CITY + " TEXT NOT NULL, " +
+                COLUMN_DATE+ " REAL NOT NULL, "+
                 COLUMN_FRIENDLY_DATE+ " TEXT NOT NULL, "+
                 COLUMN_RAIN+" REAL NOT NULL, "+
                 COLUMN_ICON+" TEXT NOT NULL, "+

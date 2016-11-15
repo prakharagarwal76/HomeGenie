@@ -3,6 +3,7 @@ package com.example.prakharagarwal.automaticirrigation;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -83,18 +84,9 @@ public class Weather extends Fragment {
 
         dba= new DBAdapter(getActivity().getApplicationContext());
 
-
-
-        /*View rootView = inflater.inflate(R.layout.fragment_weather, container, false);
-
-        // Get a reference to the ListView, and attach this adapter to it.
-        ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
-        listView.setAdapter(mForecastAdapter);
-        */
-
         View rootView = inflater.inflate(R.layout.fragment_weather, container, false);
         mIconView = (ImageView) rootView.findViewById(R.id.detail_icon);
-        mRainView=(TextView)rootView.findViewById(R.id.detail_rain_textview);
+        mRainView = (TextView) rootView.findViewById(R.id.detail_rain_textview);
         mCityView = (TextView) rootView.findViewById(R.id.detail_city_textview);
         mFriendlyDateView = (TextView) rootView.findViewById(R.id.detail_day_textview);
         mDescriptionView = (TextView) rootView.findViewById(R.id.detail_forecast_textview);
@@ -103,8 +95,104 @@ public class Weather extends Fragment {
         mHumidityView = (TextView) rootView.findViewById(R.id.detail_humidity_textview);
         mWindView = (TextView) rootView.findViewById(R.id.detail_wind_textview);
         mPressureView = (TextView) rootView.findViewById(R.id.detail_pressure_textview);
+
+        int i=0;
+        Cursor c= dba.showWeather();
+
+       // Cursor c=dba.showWeather();
+        int count=c.getCount();
+        if(count==0)
+            updateWeather();
+
+        else if(!compareDate(dba.getDate()))
+            updateWeather();
+
+        else {
+
+            WeatherData[] result;
+
+            result = new WeatherData[count];
+
+            while (c.moveToNext()) {
+                result[i] = new WeatherData(c.getInt(5), c.getString(0), c.getInt(1), c.getString(2), c.getDouble(3), c.getString(4), c.getString(5), c.getDouble(7), c.getDouble(8), c.getFloat(9), c.getDouble(10), c.getDouble(11), c.getDouble(12));
+            /*mCityView.setText(c.getString(1));
+            mRainView.setText("Precipitation: "+c.getString(2)+" mm");
+            mFriendlyDateView.setText(result[0].friendlyDateText);
+            Picasso.with(getContext()).load(result[0].icon).into(mIconView);
+            mDescriptionView.setText(result[0].description);
+            mHighTempView.setText("Max: "+result[0].high);
+            mLowTempView.setText("Min: "+result[0].low);
+            mHumidityView.setText("Humidity: "+result[0].humidity+"%");
+            mWindView.setText("Wind: "+getFormattedWind(result[0].windSpeedStr,result[0].windDirStr));
+            mPressureView.setText("Pressure: "+result[0].pressure);
+
+*/
+                i++;
+            }
+
+
+
+
+            mCityView.setText("" + result[0].city);
+            mRainView.setText("Precipitation: " + result[0].rain + " mm");
+            mFriendlyDateView.setText(result[0].friendlyDateText);
+            String iconString = "i" + result[0].icon;
+            int iconID = getContext().getResources().getIdentifier(iconString, "drawable", getContext().getPackageName());
+            mIconView.setImageDrawable(getContext().getResources().getDrawable(iconID));
+
+            //Picasso.with(getContext()).load(result[0].icon).into(mIconView);
+            mDescriptionView.setText(result[0].description);
+            mHighTempView.setText("Max: " + result[0].high);
+            mLowTempView.setText("Min: " + result[0].low);
+            mHumidityView.setText("Humidity: " + result[0].humidity + "%");
+            mWindView.setText("Wind: " + getFormattedWind(result[0].windSpeedStr, result[0].windDirStr));
+            mPressureView.setText("Pressure: " + result[0].pressure);
+        }
         return rootView;
     }
+
+
+    public String getFormattedWind(double windSpeed, double degrees) {
+
+        // From wind direction in degrees, determine compass direction as a string (e.g NW)
+        // You know what's fun, writing really long if/else statements with tons of possible
+        // conditions.  Seriously, try it!
+        String direction = "Unknown";
+        if (degrees >= 337.5 || degrees < 22.5) {
+            direction = "N";
+        } else if (degrees >= 22.5 && degrees < 67.5) {
+            direction = "NE";
+        } else if (degrees >= 67.5 && degrees < 112.5) {
+            direction = "E";
+        } else if (degrees >= 112.5 && degrees < 157.5) {
+            direction = "SE";
+        } else if (degrees >= 157.5 && degrees < 202.5) {
+            direction = "S";
+        } else if (degrees >= 202.5 && degrees < 247.5) {
+            direction = "SW";
+        } else if (degrees >= 247.5 && degrees < 292.5) {
+            direction = "W";
+        } else if (degrees >= 292.5 && degrees < 337.5) {
+            direction = "NW";
+        }
+        return windSpeed+" kmph "+direction;
+    }
+
+    public boolean compareDate(long dateInMillis) {
+        // If the date is today, return the localized version of "Today" instead of the actual
+        // day name.
+
+        Time t = new Time();
+        t.setToNow();
+        int julianDay = Time.getJulianDay(dateInMillis, t.gmtoff);
+        int currentJulianDay = Time.getJulianDay(System.currentTimeMillis(), t.gmtoff);
+        if (julianDay == currentJulianDay) {
+            return true;
+        } else
+            return false;
+
+    }
+
 
     private void updateWeather() {
         mForecastAdapter =
@@ -120,8 +208,7 @@ public class Weather extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        updateWeather();
-    }
+         }
 
     public class FetchWeatherTask extends AsyncTask<String, Void, WeatherData> {
 
@@ -130,6 +217,8 @@ public class Weather extends Fragment {
         /* The date/time conversion code is going to be moved outside the asynctask later,
          * so for convenience we're breaking it out into its own method now.
          */
+
+
         private String getReadableDateString(long time){
             // Because the API returns a unix timestamp (measured in seconds),
             // it must be converted to milliseconds in order to be converted to valid date.
@@ -163,19 +252,6 @@ public class Weather extends Fragment {
             return windSpeed+" kmph "+direction;
         }
 
-
-
-        /**
-         * Prepare the weather high/lows for presentation.
-         */
-        private String formatHighLows(double high, double low) {
-            // For presentation, assume the user doesn't care about tenths of a degree.
-            long roundedHigh = Math.round(high);
-            long roundedLow = Math.round(low);
-
-            String highLowStr = roundedHigh + "/" + roundedLow;
-            return highLowStr;
-        }
 
         private WeatherData getWeatherDataFromJson(String forecastJsonStr, int numDays)
                 throws JSONException {
@@ -267,7 +343,9 @@ public class Weather extends Fragment {
                     // That element also contains a weather code.
                     JSONObject weatherObject =
                             dayForecast.getJSONArray(OWM_WEATHER).getJSONObject(0);
-                    icon="http://openweathermap.org/img/w/"+weatherObject.getString(OWM_ICON)+".png";
+                    //icon="http://openweathermap.org/img/w/"+weatherObject.getString(OWM_ICON)+".png";
+                    icon=weatherObject.getString(OWM_ICON);//+".png";
+
                     description = weatherObject.getString(OWM_DESCRIPTION);
                     weatherId = weatherObject.getInt(OWM_WEATHER_ID);
 
@@ -276,7 +354,7 @@ public class Weather extends Fragment {
                     JSONObject temperatureObject = dayForecast.getJSONObject(OWM_TEMPERATURE);
                     high = temperatureObject.getDouble(OWM_MAX);
                     low = temperatureObject.getDouble(OWM_MIN);
-                    WeatherData weatherValues = new WeatherData(weatherId,cityName,friendlyDate,rain,icon,description ,high,low,humidity ,windSpeed,windDirection,pressure);
+                    WeatherData weatherValues = new WeatherData(weatherId,cityName,dateTime,friendlyDate,rain,icon,description ,high,low,humidity ,windSpeed,windDirection,pressure);
 
 
                     return weatherValues;
@@ -396,19 +474,22 @@ public class Weather extends Fragment {
         protected void onPostExecute(WeatherData result) {
             if (result != null) {
 
-                dba.update_weatheri(result.weatherId,result.city,result.friendlyDateText,result.rain,result.icon, result.description ,result.high,result.low,result.humidity ,result.windSpeedStr,result.windDirStr,result.pressure);
+                dba.update_weatheri(result.weatherId,result.city,result.date,result.friendlyDateText,result.rain,result.icon, result.description ,result.high,result.low,result.humidity ,result.windSpeedStr,result.windDirStr,result.pressure);
 
+                try {
 
-                mCityView.setText(""+result.city);
-                mRainView.setText("Precipitation: "+result.rain+" mm");
-                mFriendlyDateView.setText(result.friendlyDateText);
-                Picasso.with(getContext()).load(result.icon).into(mIconView);
-                mDescriptionView.setText(result.description);
-                mHighTempView.setText("Max: "+result.high);
-                mLowTempView.setText("Min: "+result.low);
-                mHumidityView.setText("Humidity: "+result.humidity+"%");
-                mWindView.setText("Wind: "+getFormattedWind(result.windSpeedStr,result.windDirStr));
-                mPressureView.setText("Pressure: "+result.pressure);
+                    mCityView.setText("" + result.city);
+                    mRainView.setText("Precipitation: " + result.rain + " mm");
+                    mFriendlyDateView.setText(result.friendlyDateText);
+                    Picasso.with(getContext()).load("http://openweathermap.org/img/w/"+result.icon+".png").into(mIconView);
+                    mDescriptionView.setText(result.description);
+                    mHighTempView.setText("Max: " + result.high);
+                    mLowTempView.setText("Min: " + result.low);
+                    mHumidityView.setText("Humidity: " + result.humidity + "%");
+                    mWindView.setText("Wind: " + getFormattedWind(result.windSpeedStr, result.windDirStr));
+                    mPressureView.setText("Pressure: " + result.pressure);
+                }
+                catch (Exception e){}
             }
         }
     }
