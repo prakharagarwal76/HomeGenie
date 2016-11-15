@@ -74,6 +74,8 @@ public class PresetTime_Adapter extends ArrayAdapter<String>
         final ImageView t4 = (ImageView) convertView.findViewById(R.id.list_item_preset_image);
         flag=0;
 
+
+
         t1.setText(name.get(position));
         t2.setText(starttime.get(position));
         t3.setText(stoptime.get(position));
