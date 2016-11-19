@@ -30,8 +30,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         dba=new DBAdapter(getApplicationContext());
+
         setContentView(R.layout.activity_main);
         new SyncTask_GET(dba).execute();
+
 
         viewPagerAdapter=new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.addFragment(new MasterControlFragment(),"Master Control");

@@ -63,10 +63,10 @@ public class AddPresetActivityFragment extends Fragment{
             public void populateSetDate(int year, int month, int day) {
                 if(flag==1){
                     Button dob=(Button) rootview.findViewById(R.id.btn1);
-                    dob.setText(month+"/"+day+"/"+year);
+                    dob.setText(day+"/"+month+"/"+year);
                 }else   if(flag==3){
                     Button dob = (Button) rootview.findViewById(R.id.btn3);
-                    dob.setText(month + "/" + day + "/" + year);
+                    dob.setText(day + "/" +month + "/" + year);
 
                 }
             }

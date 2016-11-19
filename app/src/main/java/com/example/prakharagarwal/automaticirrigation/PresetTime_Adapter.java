@@ -81,7 +81,7 @@ public class PresetTime_Adapter extends ArrayAdapter<String>
         t3.setText(stoptime.get(position));
         if(status.get(position).equals("1")){
             flag=1;
-        t4.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_alarm_on_black_24dp));
+            t4.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_alarm_on_black_24dp));
         }
         t4.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,5 +106,11 @@ public class PresetTime_Adapter extends ArrayAdapter<String>
 
         return convertView;
     }
-}
 
+    public void removeAll(int listItemPosition) {
+        name.remove(listItemPosition);
+        starttime.remove(listItemPosition);
+        stoptime.remove(listItemPosition);
+        status.remove(listItemPosition);
+    }
+}

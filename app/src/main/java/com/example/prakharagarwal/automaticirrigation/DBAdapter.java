@@ -225,6 +225,13 @@ public class DBAdapter {
         return currentStatus;
     }
 
+    public Cursor getPresetAlarms() {
+        String qry="select * from presettable;";
+        Cursor cursor=db.rawQuery(qry,null);
+
+        return cursor;
+    }
+
 
     static class DatabaseHelper extends SQLiteOpenHelper {
         private static final String DATABASE_NAME = "AutoIrrigateDB";

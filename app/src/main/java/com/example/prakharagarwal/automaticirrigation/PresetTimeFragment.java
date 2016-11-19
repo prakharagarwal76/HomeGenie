@@ -78,7 +78,7 @@ public class PresetTimeFragment extends Fragment {
                            public void onClick(DialogInterface dialog, int id) {
                                String item=(String)list.getAdapter().getItem(listItemPosition);
                                dba.deletePreset(item);
-                               adapter.remove(item);
+                               adapter.removeAll(listItemPosition);
                                adapter.notifyDataSetChanged();
                            }
                        })

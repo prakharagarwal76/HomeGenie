@@ -17,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -45,6 +46,7 @@ public class MasterControlFragment extends Fragment {
     int flag=0;
     static TextView statustext;
     static Switch status_switch;
+    static ImageView masterImage;
     public MasterControlFragment() {
         // Required empty public constructor
     }
@@ -66,8 +68,11 @@ public class MasterControlFragment extends Fragment {
         }
         statustext=(TextView)rootView.findViewById(R.id.mastercontrol_status);
         status_switch=(Switch)rootView.findViewById(R.id.mastercontrol_switch);
+
+        masterImage=(ImageView)rootView.findViewById(R.id.image_master);
         flag=0;
         int currentStatus= dba.getCurrentStatus();
+
         int i=getContext().getResources().getIdentifier("ic_add_white_24dp","drawable",getContext().getPackageName());
 
         Log.e("dfdddfdfdfdfdf",i+"");
@@ -75,10 +80,12 @@ public class MasterControlFragment extends Fragment {
         if(currentStatus==0){
             status_switch.setChecked(false);
             statustext.setText("OFF");
+            masterImage.setImageDrawable(getResources().getDrawable(R.drawable.personnotwateringaplant));
             flag=1;
         }else{
             status_switch.setChecked(true);
             statustext.setText("ONN");
+            masterImage.setImageDrawable(getResources().getDrawable(R.drawable.personwateringaplant));
             flag=1;
         }
 
@@ -99,12 +106,7 @@ public class MasterControlFragment extends Fragment {
                 }
             }
         });
-        /*Intent intent = new Intent(getContext(), PresetBroadcastReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(getContext(),0, intent, 0);
-        AlarmManager alarmManager = (AlarmManager) getContext().getSystemService(getContext().ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()
-                + (5 * 1000), pendingIntent);
-*/
+        
 
         return rootView;
     }
@@ -127,10 +129,7 @@ public class MasterControlFragment extends Fragment {
             try {
 
                 String link = "http://homegenie.gear.host/db_put.php";
-                ///     String data = URLEncoder.encode("userid", "UTF-8") + "=" + URLEncoder.encode(username, "UTF-8");
-                //  data += "&" + URLEncoder.encode("pwd", "UTF-8") + "=" + URLEncoder.encode(password, "UTF-8");
-
-
+               
                 URL url = new URL(link);
                 HttpURLConnection conn = null;
 
@@ -173,22 +172,17 @@ public class MasterControlFragment extends Fragment {
 
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
+                    
                     buffer.append(line + "\n");
                 }
 
                 if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
+                    
                     jsonString = null;
                 }
                 jsonString = buffer.toString();
                 Log.d("json",jsonString);
                 return jsonString;
-
-
-                //urlConnection.connect();
 
             } catch (Exception e) {
                 Log.e(LOG_TAG, "Error ", e);
@@ -209,9 +203,11 @@ public class MasterControlFragment extends Fragment {
 
                     Toast.makeText(getActivity(), "Water Pump is now Running", Toast.LENGTH_SHORT).show();
                     MasterControlFragment.statustext.setText("ONN");
+                    masterImage.setImageDrawable(getResources().getDrawable(R.drawable.personwateringaplant));
                 }else if(resmsg.equals("0")){
                     Toast.makeText(getActivity(), " Water Pump is now Stopped", Toast.LENGTH_SHORT).show();
                     MasterControlFragment.statustext.setText("OFF");
+                    masterImage.setImageDrawable(getResources().getDrawable(R.drawable.personnotwateringaplant));
                 }
 
             }catch (Exception e){

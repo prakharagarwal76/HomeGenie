@@ -24,7 +24,7 @@ public class PresetBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Toast.makeText(context, "yoyo", Toast.LENGTH_SHORT).show();
-        new SyncTask_PUT().execute(1);
+        //new SyncTask_PUT().execute(1);
     }
     public class SyncTask_PUT extends AsyncTask<Integer, Void, String> {
 

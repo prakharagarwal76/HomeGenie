@@ -8,6 +8,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:text="HOME GENIE"
+    android:textColor="#ffffff"
     android:textStyle="bold"
     android:fontFamily="sans-serif-medium"
     android:textSize="50sp"
