@@ -16,19 +16,33 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.SQLException;
 
 /**
  * Created by prakharagarwal on 15/11/16.
  */
 public class PresetBroadcastReceiver extends BroadcastReceiver {
+    DBAdapter dba;
+    String name;
     @Override
     public void onReceive(Context context, Intent intent) {
         //Toast.makeText(context, "yoyo1", Toast.LENGTH_SHORT).show();
-
+        dba= new DBAdapter(context);
         int status=intent.getIntExtra("status",-1);
-        //Log.e("intent:",""+status);
+        name=intent.getStringExtra("name");
+        if(status==1){
+            dba.updateCurrentStatus(1);
+            MasterControlFragment.status_switch.setChecked(true);
+
+        }else{
+            dba.updateCurrentStatus(0);
+            dba.updateStatus(3,name);
+            MasterControlFragment.status_switch.setChecked(false);
+
+        }
+        //Log.e("intent:",name);
         //int status=Integer.parseInt(intent.getStringExtra("status"));
-        new SyncTask_PUT().execute(status);
+        //new SyncTask_PUT().execute(status);
     }
     public class SyncTask_PUT extends AsyncTask<Integer, Void, String> {
 
@@ -113,15 +127,22 @@ public class PresetBroadcastReceiver extends BroadcastReceiver {
             Log.d("result", result);
             try {
                 JSONObject jsonObject= new JSONObject(result);
+                try {
 
+                    dba.open();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
                 String resmsg=jsonObject.getString("status");
                 Log.d("check", resmsg);
                 if (resmsg.equals("1")) {
-
+                    dba.updateCurrentStatus(1);
                     MasterControlFragment.status_switch.setChecked(true);
                     MasterControlFragment.statustext.setText("ONN");
                     MasterControlFragment.masterImage.setImageResource(R.drawable.personwateringaplant);
                 }else if(resmsg.equals("0")){
+                    dba.updateCurrentStatus(0);
+                    dba.updateStatus(3,name);
                     MasterControlFragment.status_switch.setChecked(false);
                     MasterControlFragment.statustext.setText("OFF");
                     MasterControlFragment.masterImage.setImageResource(R.drawable.personnotwateringaplant);

@@ -114,7 +114,7 @@ public class PresetTimeFragment extends Fragment {
         final List<String> stop=dba.getStop();
         final List<String> status=dba.getStatus();
         adapter=new PresetTime_Adapter(getActivity(),names,start,stop,status);
-        adapter.notifyDataSetChanged();
+       // adapter.notifyDataSetChanged();
         list.setAdapter(adapter);
 
 

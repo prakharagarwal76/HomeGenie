@@ -37,18 +37,31 @@
         android:id="@+id/list_item_preset_text3"
         android:minHeight="?android:attr/listPreferredItemHeight">
     </TextView>
-    <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    <FrameLayout
         android:layout_width="0dp"
         android:layout_weight="1"
+        android:layout_height="wrap_content">
+    <ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="100dp"
+
         android:textAlignment="center"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:padding="25px"
+        android:padding="10dp"
         android:src="@drawable/ic_alarm_off_black_24dp"
         android:textColor="#000000"
         android:id="@+id/list_item_preset_image"
         android:minHeight="?android:attr/listPreferredItemHeight">
     </ImageView>
+        <TextView
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="DONE"
+            android:textStyle="bold"
+            android:padding="25dp"
+            android:id="@+id/list_item_preset_text4"
+            android:layout_gravity="center"/>
+    </FrameLayout>
 
 
 </LinearLayout>

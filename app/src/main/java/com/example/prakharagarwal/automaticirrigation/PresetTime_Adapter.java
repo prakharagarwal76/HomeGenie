@@ -80,7 +80,8 @@ public class PresetTime_Adapter extends ArrayAdapter<String>
         TextView t1 = (TextView) convertView.findViewById(R.id.list_item_preset_text1);
         TextView t2 = (TextView) convertView.findViewById(R.id.list_item_preset_text2);
         TextView t3 = (TextView) convertView.findViewById(R.id.list_item_preset_text3);
-        final ImageView t4 = (ImageView) convertView.findViewById(R.id.list_item_preset_image);
+        TextView t4 = (TextView) convertView.findViewById(R.id.list_item_preset_text4);
+        final ImageView i4 = (ImageView) convertView.findViewById(R.id.list_item_preset_image);
         flag=0;
 
 
@@ -88,16 +89,22 @@ public class PresetTime_Adapter extends ArrayAdapter<String>
         t1.setText(name.get(position));
         t2.setText(starttime.get(position));
         t3.setText(stoptime.get(position));
+        t4.setVisibility(View.INVISIBLE);
         if(status.get(position).equals("1")){
             flag=1;
-            t4.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_alarm_on_black_24dp));
+            i4.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_alarm_on_black_24dp));
         }
-        t4.setOnClickListener(new View.OnClickListener() {
+        if(status.get(position).equals("3")){
+            i4.setVisibility(View.INVISIBLE);
+            t4.setVisibility(View.VISIBLE);
+
+        }
+        i4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(flag==0){
 
-                    t4.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_alarm_on_black_24dp));
+                    i4.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_alarm_on_black_24dp));
                     dba.updateStatus(1,name.get(position));
                     Calendar cal1=Calendar.getInstance();
                     Calendar cal3=Calendar.getInstance();
@@ -120,6 +127,7 @@ public class PresetTime_Adapter extends ArrayAdapter<String>
                     int stopcode=Integer.parseInt(stop);
                     Intent intent = new Intent(getContext(), PresetBroadcastReceiver.class);
                     intent.putExtra("status",1);
+                    intent.putExtra("name",name.get(position));
                     PendingIntent pendingIntent = PendingIntent.getBroadcast(
                             getContext(),startcode, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
@@ -128,6 +136,7 @@ public class PresetTime_Adapter extends ArrayAdapter<String>
 
                     Intent stopIntent = new Intent(getContext(), PresetBroadcastReceiver.class);
                     stopIntent.putExtra("status",0);
+                    stopIntent.putExtra("name",name.get(position));
 
                     PendingIntent pendingIntentStop = PendingIntent.getBroadcast(
                             getContext(),stopcode, stopIntent, PendingIntent.FLAG_CANCEL_CURRENT);
@@ -142,7 +151,7 @@ public class PresetTime_Adapter extends ArrayAdapter<String>
                     int startCode=Integer.parseInt(dba.getReqcodeonn(name.get(position)));
                     int stopCode=Integer.parseInt(dba.getReqcodeoff(name.get(position)));
 
-                    t4.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_alarm_off_black_24dp));
+                    i4.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_alarm_off_black_24dp));
                     dba.updateStatus(0,name.get(position));
 
                     Intent intent = new Intent(getContext(), PresetBroadcastReceiver.class);
