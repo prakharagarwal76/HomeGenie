@@ -75,8 +75,7 @@ public class MasterControlFragment extends Fragment {
 
         int i=getContext().getResources().getIdentifier("ic_add_white_24dp","drawable",getContext().getPackageName());
 
-        Log.e("dfdddfdfdfdfdf",i+"");
-        Log.e("dfdddfdfdfdfdf",currentStatus+"");
+
         if(currentStatus==0){
             status_switch.setChecked(false);
             statustext.setText("OFF");

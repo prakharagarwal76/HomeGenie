@@ -1,7 +1,11 @@
 package com.example.prakharagarwal.automaticirrigation;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,7 +17,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -87,12 +95,35 @@ public class PresetTime_Adapter extends ArrayAdapter<String>
             @Override
             public void onClick(View v) {
                 if(flag==0){
+
                     t4.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_alarm_on_black_24dp));
                     dba.updateStatus(1,name.get(position));
+                    Calendar cal1=Calendar.getInstance();
+                    Calendar cal2=Calendar.getInstance();
+                    SimpleDateFormat sdf=new SimpleDateFormat("d/M/yyyy H:m");
+                   try {Date date=sdf.parse(starttime.get(position));
+                       cal1.setTime(date);
+                       Log.e("date",cal1+"");
+                   }catch (ParseException e){
+
+                   }
+                    Intent intent = new Intent(getContext(), PresetBroadcastReceiver.class);
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                            getContext(),position, intent, 0);
+                    AlarmManager alarmManager = (AlarmManager)getContext().getSystemService(getContext().ALARM_SERVICE);
+                    alarmManager.set(AlarmManager.RTC_WAKEUP,cal1.getTimeInMillis(), pendingIntent);
                     flag=1;
+
+
+
                 }else{
                     t4.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_alarm_off_black_24dp));
                     dba.updateStatus(0,name.get(position));
+                    Intent intent = new Intent(getContext(), PresetBroadcastReceiver.class);
+                    PendingIntent pendingIntent = PendingIntent.getBroadcast(
+                            getContext(),position, intent, 0);
+                    AlarmManager alarmManager = (AlarmManager)getContext().getSystemService(getContext().ALARM_SERVICE);
+                    alarmManager.cancel(pendingIntent);
                     flag=0;
                 }
             }

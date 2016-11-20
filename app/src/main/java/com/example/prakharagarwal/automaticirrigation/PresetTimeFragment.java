@@ -106,7 +106,7 @@ public class PresetTimeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        //Toast.makeText(getActivity(), "dsfsdf", Toast.LENGTH_SHORT).show();
+
         adapter.clear();
 
         final List<String> names=dba.getNames();
