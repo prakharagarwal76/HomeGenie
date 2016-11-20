@@ -31,6 +31,7 @@ public class PresetTime_Adapter extends ArrayAdapter<String>
 {
 
     private Context context;
+    //private List<Long> id;
     private List<String> name;
     private List<String> starttime;
     private List<String> stoptime;
@@ -44,11 +45,13 @@ public class PresetTime_Adapter extends ArrayAdapter<String>
     {
         super(context,0,name);
         this.context = context;
+        //this.id= new ArrayList<Long>();
         this.name = new ArrayList<String>();
         this.starttime = new ArrayList<String>();
         this.stoptime = new ArrayList<String>();
         this.status = new ArrayList<String>();
 
+        //this.id=id;
         this.name = name;
         this.starttime=starttime;
         this.stoptime=stoptime;
@@ -56,8 +59,6 @@ public class PresetTime_Adapter extends ArrayAdapter<String>
 
 
     }
-
-
 
     @Override
     public View getView(final int position, View convertView, ViewGroup parent)
@@ -99,43 +100,82 @@ public class PresetTime_Adapter extends ArrayAdapter<String>
                     t4.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_alarm_on_black_24dp));
                     dba.updateStatus(1,name.get(position));
                     Calendar cal1=Calendar.getInstance();
-                    Calendar cal2=Calendar.getInstance();
+                    Calendar cal3=Calendar.getInstance();
                     SimpleDateFormat sdf=new SimpleDateFormat("d/M/yyyy H:m");
                    try {Date date=sdf.parse(starttime.get(position));
+                        Date stopDate=sdf.parse(stoptime.get(position));
                        cal1.setTime(date);
-                       Log.e("date",cal1+"");
+                       cal3.setTime(stopDate);
+                       Log.e("date",starttime.get(position)+"");
                    }catch (ParseException e){
 
                    }
+                    String code=getCode(starttime.get(position));
+                    Log.e("onClick: ",""+code);
+                    String start= code+"1";
+                    String stop=code+"0";
+                    dba.updateReqcode(name.get(position),start,stop);
+
+                    int startcode=Integer.parseInt(start);
+                    int stopcode=Integer.parseInt(stop);
                     Intent intent = new Intent(getContext(), PresetBroadcastReceiver.class);
+                    intent.putExtra("status",1);
                     PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                            getContext(),position, intent, 0);
+                            getContext(),startcode, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
                     AlarmManager alarmManager = (AlarmManager)getContext().getSystemService(getContext().ALARM_SERVICE);
                     alarmManager.set(AlarmManager.RTC_WAKEUP,cal1.getTimeInMillis(), pendingIntent);
+
+                    Intent stopIntent = new Intent(getContext(), PresetBroadcastReceiver.class);
+                    stopIntent.putExtra("status",0);
+
+                    PendingIntent pendingIntentStop = PendingIntent.getBroadcast(
+                            getContext(),stopcode, stopIntent, PendingIntent.FLAG_CANCEL_CURRENT);
+                    AlarmManager alarmManagerStop = (AlarmManager)getContext().getSystemService(getContext().ALARM_SERVICE);
+                    alarmManagerStop.set(AlarmManager.RTC_WAKEUP,cal3.getTimeInMillis(), pendingIntentStop);
+
                     flag=1;
 
 
 
                 }else{
+                    int startCode=Integer.parseInt(dba.getReqcodeonn(name.get(position)));
+                    int stopCode=Integer.parseInt(dba.getReqcodeoff(name.get(position)));
+
                     t4.setImageDrawable(getContext().getResources().getDrawable(R.drawable.ic_alarm_off_black_24dp));
                     dba.updateStatus(0,name.get(position));
+
                     Intent intent = new Intent(getContext(), PresetBroadcastReceiver.class);
+
                     PendingIntent pendingIntent = PendingIntent.getBroadcast(
-                            getContext(),position, intent, 0);
+                            getContext(),startCode, intent, 0);
                     AlarmManager alarmManager = (AlarmManager)getContext().getSystemService(getContext().ALARM_SERVICE);
                     alarmManager.cancel(pendingIntent);
+
+                    PendingIntent pendingStopIntent = PendingIntent.getBroadcast(
+                            getContext(),stopCode, intent, 0);
+                    AlarmManager alarmManagerStop = (AlarmManager)getContext().getSystemService(getContext().ALARM_SERVICE);
+                    alarmManagerStop.cancel(pendingStopIntent);
+
                     flag=0;
                 }
             }
         });
 
-
-
-
-
-
-
         return convertView;
+    }
+
+    public String getCode(String date)
+    {
+        String coded="";
+        String[] splitted = date.split("[/ :]");
+        for (int i=0;i<splitted.length;i++) {
+            if(i==2) {
+                splitted[i] ="";
+            }
+            coded=coded + splitted[i];
+        }
+        return coded;
     }
 
     public void removeAll(int listItemPosition) {
@@ -143,5 +183,6 @@ public class PresetTime_Adapter extends ArrayAdapter<String>
         starttime.remove(listItemPosition);
         stoptime.remove(listItemPosition);
         status.remove(listItemPosition);
+
     }
 }

@@ -23,8 +23,12 @@ import java.net.URL;
 public class PresetBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        Toast.makeText(context, "yoyo1", Toast.LENGTH_SHORT).show();
-        //new SyncTask_PUT().execute(1);
+        //Toast.makeText(context, "yoyo1", Toast.LENGTH_SHORT).show();
+
+        int status=intent.getIntExtra("status",-1);
+        //Log.e("intent:",""+status);
+        //int status=Integer.parseInt(intent.getStringExtra("status"));
+        new SyncTask_PUT().execute(status);
     }
     public class SyncTask_PUT extends AsyncTask<Integer, Void, String> {
 
@@ -42,9 +46,6 @@ public class PresetBroadcastReceiver extends BroadcastReceiver {
             try {
 
                 String link = "http://homegenie.gear.host/db_put.php";
-                ///     String data = URLEncoder.encode("userid", "UTF-8") + "=" + URLEncoder.encode(username, "UTF-8");
-                //  data += "&" + URLEncoder.encode("pwd", "UTF-8") + "=" + URLEncoder.encode(password, "UTF-8");
-
 
                 URL url = new URL(link);
                 HttpURLConnection conn = null;
@@ -88,22 +89,17 @@ public class PresetBroadcastReceiver extends BroadcastReceiver {
 
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
+
                     buffer.append(line + "\n");
                 }
 
                 if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
+
                     jsonString = null;
                 }
                 jsonString = buffer.toString();
                 Log.d("json",jsonString);
                 return jsonString;
-
-
-                //urlConnection.connect();
 
             } catch (Exception e) {
                 Log.e(LOG_TAG, "Error ", e);
@@ -122,11 +118,13 @@ public class PresetBroadcastReceiver extends BroadcastReceiver {
                 Log.d("check", resmsg);
                 if (resmsg.equals("1")) {
 
-
+                    MasterControlFragment.status_switch.setChecked(true);
                     MasterControlFragment.statustext.setText("ONN");
+                    MasterControlFragment.masterImage.setImageResource(R.drawable.personwateringaplant);
                 }else if(resmsg.equals("0")){
-
+                    MasterControlFragment.status_switch.setChecked(false);
                     MasterControlFragment.statustext.setText("OFF");
+                    MasterControlFragment.masterImage.setImageResource(R.drawable.personnotwateringaplant);
                 }
 
             }catch (Exception e){
@@ -138,4 +136,5 @@ public class PresetBroadcastReceiver extends BroadcastReceiver {
 
 
     }
+
 }

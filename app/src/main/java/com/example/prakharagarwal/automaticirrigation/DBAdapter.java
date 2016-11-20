@@ -33,8 +33,6 @@ public class DBAdapter {
     }
 
     public  long getDate(){
-
-
         String qry= "select date from weather; ";
         Cursor cursor=db.rawQuery(qry,null);
         int count = cursor.getCount();
@@ -92,7 +90,6 @@ public class DBAdapter {
             i++;
         }
 
-
         List<String> nameList=new ArrayList<String>(Arrays.asList(names));
         return nameList;
     }
@@ -109,17 +106,50 @@ public class DBAdapter {
 
         }
 
-
         List<String> nameList=new ArrayList<String>(Arrays.asList(names));
         return nameList;
     }
+
+    public String getReqcodeoff(String name){
+        String qry= "select reqcodeoff from presettable where name='"+name+"'; ";
+        Cursor cursor=db.rawQuery(qry,null);
+        String stop=null;
+        while (cursor.moveToNext())
+        {
+            stop=cursor.getString(0);
+        }
+
+            return stop;
+    }
+    public String getReqcodeonn(String name){
+        String qry= "select reqcodeonn from presettable where name='"+name+"'; ";
+        Cursor cursor=db.rawQuery(qry,null);
+        String start=null;
+        while (cursor.moveToNext())
+        {
+            start=cursor.getString(0);
+        }
+
+        return start;
+    }
+
+    public void updateReqcode(String name,String start, String stop) {
+            String qr1="update presettable set reqcodeonn="+start+" where name='"+name+"';";
+            db.execSQL(qr1);
+            String qr2="update presettable set reqcodeoff="+stop+" where name='"+name+"';";
+            db.execSQL(qr2);
+    }
+
     public long insert(String name,String start, String stop) {
         //db = DBHelper.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
+        //contentValues.put(DatabaseHelper.ID, id1);
         contentValues.put(DatabaseHelper.NAME, name);
         contentValues.put(DatabaseHelper.START_TIME, start);
         contentValues.put(DatabaseHelper.STOP_TIME, stop);
         contentValues.put(DatabaseHelper.STATUS,0);
+        contentValues.put(DatabaseHelper.REQCODEONN,(String)null);
+        contentValues.put(DatabaseHelper.REQCODEOFF,(String)null);
 
         long id = db.insert(DatabaseHelper.PRESET_TABLE, null, contentValues);
         //DBHelper.close();
@@ -128,24 +158,8 @@ public class DBAdapter {
 
     public Cursor showWeather()
     {
-        //int count=0,i=0;
         String qry="select * from weather;";
         Cursor c=db.rawQuery(qry,null);
-
-        /*WeatherData[] result;
-
-        count=c.getCount();
-        result=new WeatherData[count];
-
-        while (c.moveToNext())
-        {
-            result[i]= new WeatherData(c.getInt(6),c.getString(1),c.getString(2),c.getDouble(3),c.getString(4),c.getString(5),c.getDouble(7),c.getDouble(8),c.getFloat(9),c.getDouble(10),c.getDouble(11),c.getDouble(12));
-            i++;
-        }
-        // List<Movie> movieList=new ArrayList<>(Arrays.asList(result));
-        return result;
-        */
-
         return c;
     }
 
@@ -236,19 +250,12 @@ public class DBAdapter {
     static class DatabaseHelper extends SQLiteOpenHelper {
         private static final String DATABASE_NAME = "AutoIrrigateDB";
 
-        // syncstatus is to check whether 'Sync with PRU_X Box' or �Sync with
-        // kanWallet� is remaining or both are remaining or none is remaining
-        //variable for table
-        private static final String SYNC_STATUS = "syncstatus";
-        // status will hold 0, 1, 2
-        // 0 by default when no sync is done
-        // 1 when Wallet sync is done
-        // 2 when PRU_X sync is done
-
         private static final String NAME="name";
         private static final String START_TIME = "starttime";
         private static final String STOP_TIME = "stoptime";
         private static final String STATUS = "status";
+        private static final String REQCODEONN="reqcodeonn";
+        private static final String REQCODEOFF="reqcodeoff";
 
         // Date, stored as long in milliseconds since the epoch
         public static final String COLUMN_CITY = "city";
@@ -297,8 +304,8 @@ public class DBAdapter {
 
 
         private static final String PRESET_CREATE = "create table if not exists "
-                + PRESET_TABLE + "(" + NAME + " VARCHAR(25) primary key, " + START_TIME + " VARCHAR(25), " + STOP_TIME + " VARCHAR(25) , "
-                + STATUS + " INTEGER " + ");";
+                + PRESET_TABLE + "( "+ NAME + " VARCHAR(25) primary key, " + START_TIME + " VARCHAR(25), " + STOP_TIME + " VARCHAR(25) , "
+                + STATUS + " INTEGER ," + REQCODEONN+" VARCHAR(10) , "+REQCODEOFF+" VARCHAR(10) "+" );";
 
 
         private static final String  STATUS_CREATE=" create table if not exists "

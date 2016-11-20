@@ -34,9 +34,7 @@ public class SetMasterControlAsync  extends AsyncTask<String,Void,String> {
     protected String doInBackground(String... arg0) {
         try {
 
-
-
-
+            
             //String link = context.getString(R.string.url1);
 
            // URL url = new URL(link);
