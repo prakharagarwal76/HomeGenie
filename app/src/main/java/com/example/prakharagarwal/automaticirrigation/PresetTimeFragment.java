@@ -32,7 +32,7 @@ public class PresetTimeFragment extends Fragment {
     DBAdapter dba ;
     PresetTime_Adapter adapter;
     int listItemPosition;
-    ListView list;
+    static ListView list;
 
     public PresetTimeFragment() {
         // Required empty public constructor
@@ -114,9 +114,10 @@ public class PresetTimeFragment extends Fragment {
         final List<String> stop=dba.getStop();
         final List<String> status=dba.getStatus();
         adapter=new PresetTime_Adapter(getActivity(),names,start,stop,status);
-       // adapter.notifyDataSetChanged();
+        //adapter.notifyDataSetChanged();
         list.setAdapter(adapter);
 
 
     }
+
 }

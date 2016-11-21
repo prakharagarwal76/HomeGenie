@@ -47,15 +47,15 @@ public class DBAdapter {
     public List<String> getNames(){
         String names[];
         int i=0;
-        String qry= "select name from presettable; ";
+        String qry= "select name,starttime from presettable; ";
         Cursor cursor=db.rawQuery(qry,null);
         int count = cursor.getCount();
         names= new String[count];
         while(cursor.moveToNext()){
             names[i]=cursor.getString(0);
+            Log.e("getname:",names[i]);
             i++;
         }
-
 
         List<String> nameList=new ArrayList<String>(Arrays.asList(names));
         return nameList;
@@ -93,6 +93,7 @@ public class DBAdapter {
         List<String> nameList=new ArrayList<String>(Arrays.asList(names));
         return nameList;
     }
+
     public List<String> getStatus(){
         String names[];
         int i=0;
@@ -109,6 +110,18 @@ public class DBAdapter {
         List<String> nameList=new ArrayList<String>(Arrays.asList(names));
         return nameList;
     }
+
+    public int getStatusByName(String name){
+        String qry= "select status from presettable where name='"+name+"'; ";
+        Cursor cursor=db.rawQuery(qry,null);
+        int status=-1;
+        while (cursor.moveToNext())
+        {
+            status=cursor.getInt(0);
+        }
+        return status;
+    }
+
 
     public String getReqcodeoff(String name){
         String qry= "select reqcodeoff from presettable where name='"+name+"'; ";
@@ -154,6 +167,18 @@ public class DBAdapter {
         long id = db.insert(DatabaseHelper.PRESET_TABLE, null, contentValues);
         //DBHelper.close();
         return id;
+    }
+
+
+    public double getRain(){
+        double rainfall=0;
+        String qry="select rain from weather";
+        Cursor c=db.rawQuery(qry,null);
+        while (c.moveToNext())
+        {
+            rainfall=c.getDouble(0);
+        }
+        return rainfall;
     }
 
     public Cursor showWeather()
@@ -226,6 +251,16 @@ public class DBAdapter {
         }
 
 
+    }
+
+    public String getIcon(){
+        String qry="select icon from weather;";
+        Cursor c=db.rawQuery(qry,null);
+        String icon=null;
+        while (c.moveToNext()){
+            icon=c.getString(0);
+        }
+        return icon;
     }
 
     public int getCurrentStatus() {

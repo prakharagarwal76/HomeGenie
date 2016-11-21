@@ -97,7 +97,11 @@ public class PresetTime_Adapter extends ArrayAdapter<String>
         if(status.get(position).equals("3")){
             i4.setVisibility(View.INVISIBLE);
             t4.setVisibility(View.VISIBLE);
-
+        }
+        if(status.get(position).equals("4")){
+            i4.setVisibility(View.INVISIBLE);
+            t4.setText("CANCELLED");
+            t4.setVisibility(View.VISIBLE);
         }
         i4.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,6 +132,7 @@ public class PresetTime_Adapter extends ArrayAdapter<String>
                     Intent intent = new Intent(getContext(), PresetBroadcastReceiver.class);
                     intent.putExtra("status",1);
                     intent.putExtra("name",name.get(position));
+                    intent.putExtra("position",position);
                     PendingIntent pendingIntent = PendingIntent.getBroadcast(
                             getContext(),startcode, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
@@ -137,6 +142,7 @@ public class PresetTime_Adapter extends ArrayAdapter<String>
                     Intent stopIntent = new Intent(getContext(), PresetBroadcastReceiver.class);
                     stopIntent.putExtra("status",0);
                     stopIntent.putExtra("name",name.get(position));
+                    stopIntent.putExtra("position",position);
 
                     PendingIntent pendingIntentStop = PendingIntent.getBroadcast(
                             getContext(),stopcode, stopIntent, PendingIntent.FLAG_CANCEL_CURRENT);

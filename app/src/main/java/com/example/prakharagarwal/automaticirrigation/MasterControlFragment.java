@@ -127,8 +127,9 @@ public class MasterControlFragment extends Fragment {
 
             try {
 
-                String link = "http://homegenie.gear.host/db_put.php";
-               
+                //String link = "http://homegenie.gear.host/db_put.php";
+                String link="http://10.0.2.2:8888/automaticirrigation/db_put.php";
+
                 URL url = new URL(link);
                 HttpURLConnection conn = null;
 
