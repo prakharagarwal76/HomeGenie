@@ -34,10 +34,10 @@
 
 
    </LinearLayout>
-    <ImageView
+    <!--<ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/image_master"
         android:layout_below="@+id/LinLayout_master"/>
-
+-->
 </RelativeLayout>

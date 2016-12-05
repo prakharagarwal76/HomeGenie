@@ -46,7 +46,7 @@ public class MasterControlFragment extends Fragment {
     int flag=0;
     static TextView statustext;
     static Switch status_switch;
-    static ImageView masterImage;
+    //static ImageView masterImage;
     public MasterControlFragment() {
         // Required empty public constructor
     }
@@ -69,7 +69,7 @@ public class MasterControlFragment extends Fragment {
         statustext=(TextView)rootView.findViewById(R.id.mastercontrol_status);
         status_switch=(Switch)rootView.findViewById(R.id.mastercontrol_switch);
 
-        masterImage=(ImageView)rootView.findViewById(R.id.image_master);
+        //masterImage=(ImageView)rootView.findViewById(R.id.image_master);
         flag=0;
         int currentStatus= dba.getCurrentStatus();
 
@@ -79,12 +79,12 @@ public class MasterControlFragment extends Fragment {
         if(currentStatus==0){
             status_switch.setChecked(false);
             statustext.setText("OFF");
-            masterImage.setImageDrawable(getResources().getDrawable(R.drawable.personnotwateringaplant));
+            //masterImage.setImageDrawable(getResources().getDrawable(R.drawable.personnotwateringaplant));
             flag=1;
         }else{
             status_switch.setChecked(true);
             statustext.setText("ONN");
-            masterImage.setImageDrawable(getResources().getDrawable(R.drawable.personwateringaplant));
+            //masterImage.setImageDrawable(getResources().getDrawable(R.drawable.personwateringaplant));
             flag=1;
         }
 
@@ -128,7 +128,7 @@ public class MasterControlFragment extends Fragment {
             try {
 
                 //String link = "http://homegenie.gear.host/db_put.php";
-                String link="http://10.0.2.2:8888/automaticirrigation/db_put.php";
+                String link="http://192.168.43.180:8888/automaticirrigation/db_put.php";
 
                 URL url = new URL(link);
                 HttpURLConnection conn = null;
@@ -203,11 +203,11 @@ public class MasterControlFragment extends Fragment {
 
                     Toast.makeText(getActivity(), "Water Pump is now Running", Toast.LENGTH_SHORT).show();
                     MasterControlFragment.statustext.setText("ONN");
-                    masterImage.setImageDrawable(getResources().getDrawable(R.drawable.personwateringaplant));
+                    //masterImage.setImageDrawable(getResources().getDrawable(R.drawable.personwateringaplant));
                 }else if(resmsg.equals("0")){
                     Toast.makeText(getActivity(), " Water Pump is now Stopped", Toast.LENGTH_SHORT).show();
                     MasterControlFragment.statustext.setText("OFF");
-                    masterImage.setImageDrawable(getResources().getDrawable(R.drawable.personnotwateringaplant));
+                   // masterImage.setImageDrawable(getResources().getDrawable(R.drawable.personnotwateringaplant));
                 }
 
             }catch (Exception e){
