@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
         viewPagerAdapter=new ViewPagerAdapter(getSupportFragmentManager());
         viewPagerAdapter.addFragment(new MasterControlFragment(),"Master Control");
         viewPagerAdapter.addFragment(new PresetTimeFragment(),"Preset Time");
-        viewPagerAdapter.addFragment(new Weather(),"Weather");
+      //  viewPagerAdapter.addFragment(new Weather(),"Weather");
 
         viewPager =(ViewPager)findViewById(R.id.viewpager);
         tabLayout=(TabLayout)findViewById(R.id.tablayout);

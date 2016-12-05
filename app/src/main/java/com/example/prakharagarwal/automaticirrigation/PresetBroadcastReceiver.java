@@ -38,18 +38,18 @@ public class PresetBroadcastReceiver extends BroadcastReceiver {
         name=intent.getStringExtra("name");
         position=intent.getIntExtra("position",-1);
         if(status==1){
-            double rainThreshold=dba.getRain();
+            /*double rainThreshold=dba.getRain();
             if(rainThreshold>=4){
                 dba.updateStatus(4,name);
                 msg="Heavy rainfall detected, watering cancelled";
                 showNotification(context,msg);
             }
-            else {
+            else {*/
                 dba.updateCurrentStatus(1);
                 msg="Water pump is going to start";
                 showNotification(context,msg);
                 MasterControlFragment.status_switch.setChecked(true);
-            }
+            //}
 
         }else{
             msg="Water pump stopped";
@@ -81,118 +81,6 @@ public class PresetBroadcastReceiver extends BroadcastReceiver {
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         mNotificationManager.notify(1, mBuilder.build());
     }
-    public class SyncTask_PUT extends AsyncTask<Integer, Void, String> {
 
-        private final String LOG_TAG = SyncTask_PUT.class.getName();
-
-
-
-        @Override
-        protected  String doInBackground(Integer... status) {
-
-
-            String jsonString;
-            BufferedReader reader;
-
-            try {
-
-                String link = "http://homegenie.gear.host/db_put.php";
-
-                URL url = new URL(link);
-                HttpURLConnection conn = null;
-
-                JSONObject data = new JSONObject();
-                data.put("status", status[0]);
-
-                JSONObject jsonObject = new JSONObject();
-
-                jsonObject.put("data", data);
-                String message = jsonObject.toString();
-                Log.d("json", message);
-                conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("POST");
-
-
-
-                conn.setFixedLengthStreamingMode(message.getBytes().length);
-
-                conn.setDoOutput(true);
-
-                conn.setRequestProperty("Content-Type", "application/json;charset=utf-8");
-
-                conn.setRequestProperty("X-Requested-With", "XMLHttpRequest");
-
-
-                OutputStream os = new BufferedOutputStream(conn.getOutputStream());
-
-                os.write(message.getBytes());
-
-
-                os.flush();
-
-                InputStream inputStream = conn.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    // Nothing to do.
-                    jsonString = null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-
-                    jsonString = null;
-                }
-                jsonString = buffer.toString();
-                Log.d("json",jsonString);
-                return jsonString;
-
-            } catch (Exception e) {
-                Log.e(LOG_TAG, "Error ", e);
-                return "";
-            } finally {
-                // urlConnection.disconnect();
-            }
-
-        }
-        protected void onPostExecute(String result) {
-            Log.d("result", result);
-            try {
-                JSONObject jsonObject= new JSONObject(result);
-                try {
-
-                    dba.open();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-                String resmsg=jsonObject.getString("status");
-                Log.d("check", resmsg);
-                if (resmsg.equals("1")) {
-                    dba.updateCurrentStatus(1);
-                    MasterControlFragment.status_switch.setChecked(true);
-                    MasterControlFragment.statustext.setText("ONN");
-                    MasterControlFragment.masterImage.setImageResource(R.drawable.personwateringaplant);
-                }else if(resmsg.equals("0")){
-                    dba.updateCurrentStatus(0);
-                    dba.updateStatus(3,name);
-                    MasterControlFragment.status_switch.setChecked(false);
-                    MasterControlFragment.statustext.setText("OFF");
-                    MasterControlFragment.masterImage.setImageResource(R.drawable.personnotwateringaplant);
-                }
-
-            }catch (Exception e){
-
-            }
-
-
-        }
-
-
-    }
 
 }
